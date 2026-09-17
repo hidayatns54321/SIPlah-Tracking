@@ -341,23 +341,15 @@
 
   <div class="ledger-summary" id="summaryCards">
     <div class="stat"><div class="lbl">Total baris pesanan</div><div class="val num" id="statTotal">&ndash;</div><div class="sub" id="statSekolah">&ndash;</div></div>
-    <div class="stat"><div class="lbl">Stok terpakai (Qty SIPLah)</div><div class="val num" id="statStokTerpakai">&ndash;</div><div class="sub" id="statStokSub">&ndash;</div></div>
-    <div class="stat"><div class="lbl">Sudah dikonfirmasi SIPLah</div><div class="val num" id="statDone">&ndash;</div><div class="sub" id="statDonePct">&ndash;</div></div>
-    <div class="stat warn"><div class="lbl">Data bermasalah</div><div class="val num" id="statIssue">&ndash;</div><div class="sub">klik &ldquo;Data Bermasalah&rdquo; di filter untuk melihat barisnya</div></div>
+    <div class="stat"><div class="lbl">Stok terpakai (Qty RAB)</div><div class="val num" id="statStokTerpakai">&ndash;</div><div class="sub" id="statStokSub">&ndash;</div></div>
+    <div class="stat"><div class="lbl">Amount (RAB) Terpakai</div><div class="val num" id="statAmountUsed">&ndash;</div><div class="sub" id="statAmountSub">&ndash;</div></div>
+    <div class="stat"><div class="lbl">Terpenuhi</div><div class="val num" id="statDone">&ndash;</div><div class="sub" id="statDonePct">&ndash;</div></div>
+    <div class="stat warn"><div class="lbl">Perlu Tindakan</div><div class="val num" id="statIssue">&ndash;</div><div class="sub">klik &ldquo;Perlu Tindakan&rdquo; di filter untuk melihat barisnya</div></div>
   </div>
 
-  <div class="panel" id="stokPanel" style="margin-bottom:14px;">
-    <div class="panel-head">
-      <div class="panel-title">Ringkasan stok &mdash; kebutuhan vs terpakai</div>
-      <span class="result-count" id="stokRatio">&ndash;</span>
-    </div>
-    <div class="stokbar"><i id="stokFill" style="width:0%;background:var(--ledger);"></i><i id="stokRest" style="flex:1;background:var(--line-soft);"></i></div>
-    <div class="stok-legend">
-      <span><i class="dotk" style="background:var(--ledger);"></i>Terpakai: <b id="stokUsed">&ndash;</b></span>
-      <span><i class="dotk" style="background:var(--line-soft);border:1px solid var(--line);"></i>Sisa belum dipesan: <b id="stokLeft">&ndash;</b></span>
-      <span>Total kebutuhan (Jumlah Siswa): <b id="stokNeed">&ndash;</b></span>
-      <span>Selisih qty bermasalah: <b id="stokMismatch">&ndash;</b></span>
-    </div>
+  <div id="stokPanel" style="display:none;">
+    <span id="stokRatio"></span><i id="stokFill"></i><i id="stokRest"></i>
+    <b id="stokUsed"></b><b id="stokLeft"></b><b id="stokNeed"></b><b id="stokMismatch"></b>
   </div>
 
   <div class="panel-grid">
@@ -366,18 +358,14 @@
         <div class="panel-title">Progres SIPLah</div>
         <div>
           <select id="groupBy">
-            <option value="school">per Sekolah</option>
             <option value="regional">per Regional</option>
             <option value="area">per Area</option>
             <option value="entity">per Entity</option>
             <option value="pic">per PIC Sales</option>
-            <option value="toko">per Toko</option>
           </select>
           <select id="groupSort">
             <option value="pct-asc">Progres terendah dulu</option>
             <option value="pct-desc">Progres tertinggi dulu</option>
-            <option value="total-desc">Baris terbanyak dulu</option>
-            <option value="name">Urut nama</option>
           </select>
         </div>
       </div>
@@ -408,9 +396,9 @@
     <select id="filterStatus"><option value="">Semua Status SIPLah</option></select>
     <div class="seg" id="markSeg">
       <button data-mark="" class="active">Semua</button>
-      <button data-mark="done">Sudah Diisi</button>
-      <button data-mark="pending">Belum Diisi</button>
-      <button data-mark="issue">Data Bermasalah</button>
+      <button data-mark="done">Terpenuhi</button>
+      <button data-mark="pending">Belum Terpenuhi</button>
+      <button data-mark="issue">Perlu Tindakan</button>
     </div>
     <span class="result-count" id="resultCount"></span>
     <button class="export-btn" id="exportBtn">&#8681; Export ke Excel</button>
@@ -424,8 +412,8 @@
   </div>
 
   <footer>
-    Data ditarik langsung (live) dari <a href="https://docs.google.com/spreadsheets/d/1Tb57m1TxkKN4bTdrc1WsV-OEIz154ZoZXdPQ6604-_M/edit#gid=1613762228" target="_blank" rel="noopener">Google Spreadsheet &mdash; Data Rekap Manual RAB Banpem 2026</a>,
-    sheet id <code class="num">1613762228</code>. Halaman ini tidak menyimpan salinan data di server manapun &mdash; setiap kali dibuka atau di-refresh, data terbaru diambil langsung dari spreadsheet.
+    Data ditarik langsung (live) dari <a href="https://docs.google.com/spreadsheets/d/1KLmI_1j0VIjYwK1f1FBt_weYxa8BJrpiXe495KhIeGM/edit#gid=0" target="_blank" rel="noopener">Google Spreadsheet &mdash; Mirror data (RAB Banpem 2026)</a>,
+    sheet id <code class="num">0</code>. Halaman ini tidak menyimpan salinan data di server manapun &mdash; setiap kali dibuka atau di-refresh, data terbaru diambil langsung dari spreadsheet.
     Agar berfungsi, spreadsheet harus dalam mode berbagi &ldquo;Siapa saja yang memiliki link &ndash; Pelihat&rdquo;.
   </footer>
 
@@ -435,8 +423,8 @@
 /* ============================================================
    KONFIGURASI
    ============================================================ */
-const SHEET_ID  = '1Tb57m1TxkKN4bTdrc1WsV-OEIz154ZoZXdPQ6604-_M';
-const SHEET_GID = '1613762228';
+const SHEET_ID  = '1KLmI_1j0VIjYwK1f1FBt_weYxa8BJrpiXe495KhIeGM';
+const SHEET_GID = '0';
 const AUTO_REFRESH_MS = 5 * 60 * 1000;
 
 /* Kolom yang ditampilkan. idx dicari otomatis dari header, dan bisa
@@ -593,7 +581,7 @@ let IDX = {};         // key -> index kolom (hasil auto + override manual)
 let OVERRIDE = {};    // key -> index kolom pilihan user
 let COLS = [];        // definisi kolom yang tampil
 let refreshTimer = null;
-const state = { q:'', regional:'', entity:'', pic:'', status:'', mark:'', groupBy:'school', groupSort:'pct-asc' };
+const state = { q:'', regional:'', entity:'', pic:'', status:'', mark:'', groupBy:'regional', groupSort:'pct-asc' };
 let sortState = { colIdx:-1, dir:1 };
 
 /* akses nilai sel by key */
@@ -871,8 +859,9 @@ function render(){
 function updateSummary(){
   document.getElementById('statTotal').textContent = fmtNum(ROWS.length);
 
-  const sekolahSet = new Set(ROWS.map(r => val(r,'sekolah')).filter(v=>v!==''));
-  document.getElementById('statSekolah').textContent = sekolahSet.size ? fmtNum(sekolahSet.size) + ' sekolah' : '–';
+  const hasNpsn = IDX['npsn'] >= 0;
+  const sekolahSet = new Set(ROWS.map(r => val(r, hasNpsn ? 'npsn' : 'sekolah')).filter(v=>v!==''));
+  document.getElementById('statSekolah').textContent = sekolahSet.size ? fmtNum(sekolahSet.size) + ' sekolah (NPSN unik)' : '–';
 
   const doneRows = ROWS.filter(isFilled);
   document.getElementById('statDone').textContent = fmtNum(doneRows.length);
@@ -881,17 +870,27 @@ function updateSummary(){
 
   /* stok */
   let need = 0, used = 0, mismatch = 0;
+  let amountTarget = 0, amountUsed = 0;
   ROWS.forEach(r => {
     const s = numVal(r,'siswa'), q = numVal(r,'qty');
+    const est = numVal(r,'estimasi'), tot = numVal(r,'total');
     if(!isNaN(s)) need += s;
     if(isFilled(r) && !isNaN(q)) used += q;
     if(isFilled(r) && !isNaN(q) && !isNaN(s) && Math.round(q) !== Math.round(s)) mismatch += (q - s);
+    if(!isNaN(est)) amountTarget += est;
+    if(isFilled(r) && !isNaN(tot)) amountUsed += tot;
   });
   const hasQty = IDX['qty'] >= 0;
   document.getElementById('statStokTerpakai').textContent = hasQty ? fmtNum(used) : '–';
   document.getElementById('statStokSub').textContent = hasQty
     ? 'dari kebutuhan ' + fmtNum(need) + ' (' + (need ? Math.round(used/need*100) : 0) + '%)'
     : 'kolom Qty SIPLah belum terpetakan';
+
+  const hasAmount = IDX['total'] >= 0 && IDX['estimasi'] >= 0;
+  document.getElementById('statAmountUsed').textContent = hasAmount ? fmtIDR(amountUsed) : '–';
+  document.getElementById('statAmountSub').textContent = hasAmount
+    ? 'dari target ' + fmtIDR(amountTarget) + ' (' + (amountTarget ? Math.round(amountUsed/amountTarget*100) : 0) + '%)'
+    : 'kolom Total/Estimasi RAB belum terpetakan';
 
   const left = Math.max(need - used, 0);
   const fillPct = need ? Math.min(used/need*100, 100) : 0;
@@ -909,7 +908,7 @@ function updateSummary(){
 /* ============================================================
    PROGRES (per sekolah / regional / area / entity / PIC / toko)
    ============================================================ */
-const GROUP_KEY = { school:'sekolah', regional:'regional', area:'area', entity:'entity', pic:'picsales', toko:'toko' };
+const GROUP_KEY = { school:'npsn', regional:'regional', area:'area', entity:'entity', pic:'picsales', toko:'toko' };
 
 function renderProgress(){
   const host = document.getElementById('progressBars');
@@ -919,10 +918,11 @@ function renderProgress(){
     document.getElementById('progressNote').textContent = '';
     return;
   }
+  const isSchool = state.groupBy === 'school';
   const groups = {};
   ROWS.filter(matches).forEach(r => {
     const g = val(r,key) || '(kosong)';
-    if(!groups[g]) groups[g] = { total:0, done:0, issue:0, qty:0, siswa:0 };
+    if(!groups[g]) groups[g] = { total:0, done:0, issue:0, qty:0, siswa:0, sekolahName:'' };
     const o = groups[g];
     o.total++;
     if(isFilled(r)) o.done++;
@@ -930,6 +930,7 @@ function renderProgress(){
     const q = numVal(r,'qty'), s = numVal(r,'siswa');
     if(isFilled(r) && !isNaN(q)) o.qty += q;
     if(!isNaN(s)) o.siswa += s;
+    if(isSchool && !o.sekolahName){ const nm = val(r,'sekolah'); if(nm) o.sekolahName = nm; }
   });
 
   let entries = Object.entries(groups);
@@ -942,13 +943,14 @@ function renderProgress(){
   };
   entries.sort(sorters[state.groupSort] || sorters['pct-asc']);
 
-  const LIMIT = 150;
-  const shown = entries.slice(0, LIMIT);
+  const shown = entries;
   host.innerHTML = shown.map(([name,g]) => {
     const p = g.total ? Math.round(g.done/g.total*100) : 0;
     const color = p === 100 ? 'var(--ledger)' : p >= 50 ? '#6E9A5E' : 'var(--ochre)';
-    return `<div class="progress-row" title="${esc(name)} — ${g.done}/${g.total} baris terisi${g.issue?' · '+g.issue+' bermasalah':''} · qty ${fmtNum(g.qty)}/${fmtNum(g.siswa)}">
-      <div class="progress-label">${esc(name)}${g.issue?' <span style="color:var(--rust);">&#9888;</span>':''}</div>
+    const label = isSchool ? ('NPSN ' + name + (g.sekolahName ? ' — ' + g.sekolahName : '')) : name;
+    const tip = isSchool ? label : name;
+    return `<div class="progress-row" title="${esc(tip)} — ${g.done}/${g.total} baris terisi${g.issue?' · '+g.issue+' bermasalah':''} · qty ${fmtNum(g.qty)}/${fmtNum(g.siswa)}">
+      <div class="progress-label">${esc(label)}${g.issue?' <span style="color:var(--rust);">&#9888;</span>':''}</div>
       <div class="progress-track"><div class="progress-fill" style="width:${p}%;background:${color};"></div></div>
       <div class="progress-pct">${fmtNum(g.done)}/${fmtNum(g.total)} &middot; ${p}%</div>
     </div>`;
@@ -957,8 +959,7 @@ function renderProgress(){
   const totalDone = entries.reduce((s,[,g])=>s+g.done,0);
   const totalAll  = entries.reduce((s,[,g])=>s+g.total,0);
   document.getElementById('progressNote').textContent =
-    `${fmtNum(entries.length)} kelompok · rata-rata progres keseluruhan ${totalAll?Math.round(totalDone/totalAll*100):0}%` +
-    (entries.length > LIMIT ? ` · menampilkan ${LIMIT} teratas (pakai filter/pencarian untuk mempersempit)` : '');
+    `${fmtNum(entries.length)} kelompok (semua ditampilkan) · rata-rata progres keseluruhan ${totalAll?Math.round(totalDone/totalAll*100):0}%`;
 }
 
 /* ============================================================
